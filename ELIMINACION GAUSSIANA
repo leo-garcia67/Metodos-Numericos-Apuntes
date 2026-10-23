@@ -156,5 +156,97 @@ Segunda ecuación:
 
 El usuario únicamente ingresó el número de ecuaciones y los valores de la matriz aumentada. El programa aplicó automáticamente el método de eliminación gaussiana con pivoteo parcial y obtuvo las soluciones correctas.
 
+
+
+
+# Ejemplo automotriz: Distribución del peso de un automóvil
+
+## 1. Planteamiento del problema
+
+Un ingeniero automotriz necesita determinar la fuerza que soportan los ejes delantero y trasero de un automóvil.
+
+Datos del vehículo:
+
+- Peso total: 12,000 N
+- Distancia entre ejes: 2.5 m
+- Centro de gravedad: 1 m detrás del eje delantero
+
+Se considera que el automóvil está en reposo sobre una superficie horizontal.
+
+Se desea calcular la fuerza que soporta cada eje utilizando el método de eliminación gaussiana en Python.
+
+## 2. Sistema de ecuaciones
+
+Definimos:
+
+x = Fuerza sobre el eje delantero (N)
+y = Fuerza sobre el eje trasero (N)
+
+Por equilibrio de fuerzas:
+
+x + y = 12000
+
+Por equilibrio de momentos respecto al eje delantero:
+
+2.5y = 12000
+
+Sistema:
+
+x + y = 12000
+0x + 2.5y = 12000
+
+## 3. Datos ingresados por el usuario en Python
+
+Numero de ecuaciones: 2
+
+Fila 1: 1 1 12000
+Fila 2: 0 2.5 12000
+
+## 4. Procedimiento del programa
+
+1. Recibe los valores de la matriz aumentada.
+2. Selecciona el pivote.
+3. Realiza la eliminación hacia adelante.
+4. Aplica la sustitución hacia atrás.
+5. Calcula las fuerzas de ambos ejes.
+
+## 5. Resultados obtenidos
+
+RESULTADOS:
+
+x1 = 7200.0000
+x2 = 4800.0000
+
+Eje delantero = 7200 N
+Eje trasero = 4800 N
+
+## 6. Comprobación
+
+Primera ecuación:
+
+7200 + 4800 = 12000 ✓
+
+Segunda ecuación:
+
+2.5(4800) = 12000 ✓
+
+## 7. Conclusión
+
+Mediante el método de eliminación gaussiana se determinó que el eje delantero soporta 7200 N y el eje trasero 4800 N.
+
+El usuario únicamente ingresó los valores de la matriz aumentada y el programa calculó automáticamente los resultados.
+
+Este procedimiento permite analizar la distribución estática de cargas de un automóvil, información útil para el estudio de suspensiones y el diseño de componentes automotrices.
+
+Referencia metodológica:
+Chapra y Canale. Métodos numéricos para ingenieros, 7.ª edición, capítulo 9.
+
+Ejemplo automotriz adaptado para fines educativos.
+
+
+
+
+
+
 Referencia: Chapra y Canale, Métodos numéricos para ingenieros, 7.ª edición, capítulo 9.
 

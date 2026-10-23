@@ -1,5 +1,22 @@
-# Metodos-Numericos-Apuntes
-Libreta de apuntes de la materia Métodos Numéricos
+¿Qué es el método de Gauss-Seidel?
+El método de Gauss-Seidel es un método numérico iterativo que se utiliza para resolver sistemas de ecuaciones lineales mediante aproximaciones sucesivas.
+En palabras sencillas, consiste en suponer valores iniciales y mejorarlos mediante cálculos repetidos hasta acercarnos a la solución correcta.
+Este método se encuentra en el capítulo 11, sección 11.2, página 241, del libro de Chapra y Canale.
+¿Cómo funciona?
+1. Ordenar: Escribir las ecuaciones y despejar cada incógnita.
+2. Iniciar: Asignar valores iniciales, generalmente cero.
+3. Sustituir: Calcular la primera incógnita.
+4. Actualizar: Utilizar inmediatamente el nuevo resultado para calcular la siguiente incógnita.
+5. Repetir: Continuar hasta alcanzar el error permitido.
+
+¿Para qué sirve en ingeniería automotriz?
+Permite resolver sistemas de ecuaciones relacionados con circuitos eléctricos, fuerzas en suspensiones y distribución de temperaturas en componentes del automóvil.
+Diferencia importante:
+- Eliminación gaussiana: elimina incógnitas mediante operaciones entre ecuaciones.
+- Jacobi: utiliza los valores de la iteración anterior.
+- Gauss-Seidel: utiliza inmediatamente los nuevos valores calculados.
+En conclusión: Gauss-Seidel permite encontrar soluciones aproximadas mediante cálculos repetitivos, aprovechando los resultados nuevos para mejorar cada iteración.
+
 
 
 ELIMINACION GAUSSIANA

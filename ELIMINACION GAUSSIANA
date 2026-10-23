@@ -4,6 +4,24 @@ Libreta de apuntes de la materia Métodos Numéricos
 
 ELIMINACION GAUSSIANA
 
+ALGORITMO:
+
+Algoritmo de eliminación gaussiana con pivoteo parcial
+
+1. Inicio: Iniciar el programa.
+2. Ingresar datos: Pedir al usuario el número de ecuaciones.
+3. Crear matriz: Solicitar los coeficientes y resultados de cada ecuación.
+4. Buscar pivote: Seleccionar el número de mayor valor absoluto en la columna.
+5. Verificar pivote: Comprobar que no sea prácticamente cero.
+6. Intercambiar filas: Colocar el mejor pivote en la posición correspondiente.
+7. Eliminación hacia adelante: Calcular factores y hacer ceros debajo del pivote.
+8. Repetir: Continuar hasta formar una matriz triangular superior.
+9. Sustitución hacia atrás: Calcular las incógnitas comenzando por la última.
+10. Mostrar resultados: Imprimir las soluciones con cuatro decimales.
+11. Fin: Terminar el programa.
+
+
+CÓDIGO:
 
     # ELIMINACION HACIA ADELANTE
     for i in range(n):

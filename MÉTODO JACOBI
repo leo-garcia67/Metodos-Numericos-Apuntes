@@ -1,0 +1,141 @@
+Método de Jacobi
+Métodos Numéricos — Ingeniería en Sistemas Automotrices
+Referencia: Chapra y Canale, Métodos numéricos para ingenieros, 7.ª edición, capítulo 11, sección 11.2, páginas 242–243.
+1. ¿Qué es el método de Jacobi?
+El método de Jacobi es un procedimiento numérico iterativo que permite resolver sistemas de ecuaciones lineales mediante aproximaciones sucesivas.
+En palabras sencillas, consiste en suponer valores iniciales para las incógnitas y repetir cálculos hasta acercarnos a la solución correcta.
+A diferencia de la eliminación gaussiana, no necesitamos eliminar las incógnitas una por una.
+2. ¿Cómo funciona?
+1. Ordenar las ecuaciones y despejar una incógnita diferente en cada una.
+2. Asignar valores iniciales, normalmente cero.
+3. Sustituir esos valores en todas las ecuaciones.
+4. Calcular nuevos valores sin utilizar los recién calculados en la misma iteración.
+5. Repetir hasta alcanzar el error permitido.
+3. Fórmula general
+
+
+ALGORITMO METODO DE JACOBI
+
+Basado en el capítulo 11 del libro de Chapra y Canale.
+1. Inicio: Iniciar el programa.
+2. Ingresar datos: Solicitar el número de ecuaciones y los valores de la matriz aumentada.
+3. Verificar matriz: Comprobar que los elementos de la diagonal principal sean diferentes de cero.
+4. Asignar valores iniciales: Establecer las incógnitas inicialmente en cero.
+5. Despejar incógnitas: Preparar las ecuaciones para calcular cada variable.
+6. Calcular iteración: Obtener nuevos valores utilizando únicamente los resultados de la iteración anterior.
+7. Calcular error: Comparar los valores nuevos con los anteriores.
+8. Verificar tolerancia: Comprobar si todos los errores son menores que el error permitido.
+9. Repetir: Si no se cumple la tolerancia, actualizar los valores y realizar otra iteración, hasta alcanzar el límite establecido.
+10. Mostrar resultados: Imprimir los valores aproximados de las incógnitas o avisar si no se alcanzó la convergencia.
+11. Fin: Terminar el programa.
+Resumen del algoritmo
+Inicio → Ingresar matriz → Verificar diagonal → Asignar ceros → Despejar → Iterar → Calcular error → Verificar tolerancia → Mostrar resultados → Fin.
+Importante: En Jacobi se utilizan los valores de la iteración anterior para calcular todos los nuevos valores. No se actualizan uno por uno como en Gauss-Seidel.
+
+
+CODIGO:
+
+
+def metodo_jacobi(A, n, tolerancia=0.01, max_iter=100):
+
+    # VERIFICAR DIAGONAL
+    for i in range(n):
+        if abs(A[i][i]) < 1e-12:
+            print("Error: hay un cero en la diagonal.")
+            return
+
+    # VERIFICAR DOMINANCIA DIAGONAL
+    dominante = True
+
+    for i in range(n):
+        suma = sum(abs(A[i][j]) for j in range(n) if j != i)
+
+        if abs(A[i][i]) <= suma:
+            dominante = False
+
+    if not dominante:
+        print("Aviso: la convergencia no esta garantizada.")
+
+    # VALORES INICIALES
+    x = [0.0] * n
+
+    # ITERACIONES
+    for k in range(1, max_iter + 1):
+
+        nuevo = [0.0] * n
+        errores = []
+
+        for i in range(n):
+            suma = 0
+
+            for j in range(n):
+                if i != j:
+                    suma += A[i][j] * x[j]
+
+            nuevo[i] = (A[i][n] - suma) / A[i][i]
+
+        # CALCULAR ERROR PORCENTUAL
+        for i in range(n):
+            if abs(nuevo[i]) > 1e-12:
+                error = abs((nuevo[i] - x[i]) / nuevo[i]) * 100
+            elif abs(nuevo[i] - x[i]) < 1e-12:
+                error = 0.0
+            else:
+                error = float("inf")
+
+            errores.append(error)
+
+        # VERIFICAR TOLERANCIA
+        if max(errores) < tolerancia:
+            print("\nRESULTADOS:")
+            for i in range(n):
+                print(f"x{i+1} = {nuevo[i]:.4f}")
+
+            print(f"Iteraciones: {k}")
+            print("Convergencia alcanzada.")
+            return
+
+        x = nuevo
+
+    print("\nNo se alcanzo la tolerancia.")
+    print("Ultima aproximacion:")
+
+    for i in range(n):
+        print(f"x{i+1} = {x[i]:.4f}")
+
+
+# PROGRAMA PRINCIPAL
+while True:
+    try:
+        n = int(input("Numero de ecuaciones: "))
+
+        if n > 0:
+            break
+
+        print("Ingresa un numero mayor que cero.")
+
+    except ValueError:
+        print("Ingresa un numero entero valido.")
+
+A = []
+
+print("\nIngresa la matriz aumentada.")
+print("Escribe cada fila separada por espacios.")
+print("Incluye el resultado al final de cada fila.\n")
+
+for i in range(n):
+    while True:
+        try:
+            fila = list(map(float, input(f"Fila {i+1}: ").split()))
+
+            if len(fila) == n + 1:
+                A.append(fila)
+                break
+            else:
+                print(f"Debes ingresar {n+1} numeros.")
+
+        except ValueError:
+            print("Ingresa solamente numeros validos.")
+
+metodo_jacobi(A, n)
+

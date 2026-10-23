@@ -2,7 +2,8 @@
 Libreta de apuntes de la materia Métodos Numéricos
 
 
-def eliminacion_gaussiana(A, n):
+ELIMINACION GAUSSIANA
+
 
     # ELIMINACION HACIA ADELANTE
     for i in range(n):

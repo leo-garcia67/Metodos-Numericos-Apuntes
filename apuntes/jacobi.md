@@ -1,4 +1,5 @@
-Método de Jacobi
+# Método de Jacobi
+
 Métodos Numéricos — Ingeniería en Sistemas Automotrices
 Referencia: Chapra y Canale, Métodos numéricos para ingenieros, 7.ª edición, capítulo 11, sección 11.2, páginas 242–243.
 1. ¿Qué es el método de Jacobi?
@@ -12,6 +13,8 @@ A diferencia de la eliminación gaussiana, no necesitamos eliminar las incógnit
 4. Calcular nuevos valores sin utilizar los recién calculados en la misma iteración.
 5. Repetir hasta alcanzar el error permitido.
 3. Fórmula general
+
+Para cada ecuación, x_i se calcula despejando el coeficiente diagonal y utilizando SOLO las aproximaciones de la iteración anterior. En el programa se verifica también el residuo de las ecuaciones.
 
 
 ALGORITMO METODO DE JACOBI
@@ -33,113 +36,85 @@ Inicio → Ingresar matriz → Verificar diagonal → Asignar ceros → Despejar
 Importante: En Jacobi se utilizan los valores de la iteración anterior para calcular todos los nuevos valores. No se actualizan uno por uno como en Gauss-Seidel.
 
 
-CODIGO:
+CÓDIGO FUENTE EN PYTHON:
+
+```python
+"""Metodo iterativo de Jacobi: matriz capturada por teclado."""
 
 
-def metodo_jacobi(A, n, tolerancia=0.01, max_iter=100):
+def jacobi(matriz, tolerancia=0.01, max_iter=100):
+    n = len(matriz)
+    if any(abs(matriz[i][i]) < 1e-12 for i in range(n)):
+        return None, 0, 'Error: cero en la diagonal principal.', None
 
-    # VERIFICAR DIAGONAL
-    for i in range(n):
-        if abs(A[i][i]) < 1e-12:
-            print("Error: hay un cero en la diagonal.")
-            return
+    dominante = all(
+        abs(matriz[i][i]) > sum(abs(matriz[i][j]) for j in range(n) if j != i)
+        for i in range(n)
+    )
+    advertencia = '' if dominante else 'Aviso: diagonal no dominante. '
+    anterior = [0.0] * n
 
-    # VERIFICAR DOMINANCIA DIAGONAL
-    dominante = True
-
-    for i in range(n):
-        suma = sum(abs(A[i][j]) for j in range(n) if j != i)
-
-        if abs(A[i][i]) <= suma:
-            dominante = False
-
-    if not dominante:
-        print("Aviso: la convergencia no esta garantizada.")
-
-    # VALORES INICIALES
-    x = [0.0] * n
-
-    # ITERACIONES
-    for k in range(1, max_iter + 1):
-
-        nuevo = [0.0] * n
-        errores = []
-
-        for i in range(n):
-            suma = 0
-
-            for j in range(n):
-                if i != j:
-                    suma += A[i][j] * x[j]
-
-            nuevo[i] = (A[i][n] - suma) / A[i][i]
-
-        # CALCULAR ERROR PORCENTUAL
-        for i in range(n):
-            if abs(nuevo[i]) > 1e-12:
-                error = abs((nuevo[i] - x[i]) / nuevo[i]) * 100
-            elif abs(nuevo[i] - x[i]) < 1e-12:
-                error = 0.0
-            else:
-                error = float("inf")
-
-            errores.append(error)
-
-        # VERIFICAR TOLERANCIA
-        if max(errores) < tolerancia:
-            print("\nRESULTADOS:")
-            for i in range(n):
-                print(f"x{i+1} = {nuevo[i]:.4f}")
-
-            print(f"Iteraciones: {k}")
-            print("Convergencia alcanzada.")
-            return
-
-        x = nuevo
-
-    print("\nNo se alcanzo la tolerancia.")
-    print("Ultima aproximacion:")
-
-    for i in range(n):
-        print(f"x{i+1} = {x[i]:.4f}")
+    for paso in range(1, max_iter + 1):
+        # Todos los nuevos valores usan SOLO la iteracion anterior.
+        nuevo = [
+            (matriz[i][n] - sum(matriz[i][j] * anterior[j]
+             for j in range(n) if j != i)) / matriz[i][i]
+            for i in range(n)
+        ]
+        errores = [
+            100 * abs(nuevo[i] - anterior[i]) / abs(nuevo[i])
+            if abs(nuevo[i]) > 1e-12
+            else (0.0 if abs(nuevo[i] - anterior[i]) < 1e-12 else float('inf'))
+            for i in range(n)
+        ]
+        residuos = [
+            abs(sum(matriz[i][j] * nuevo[j] for j in range(n)) - matriz[i][n])
+            for i in range(n)
+        ]
+        if max(errores) < tolerancia and max(residuos) < 1e-4:
+            return nuevo, paso, advertencia + 'Convergencia alcanzada.', max(errores)
+        if max(abs(v) for v in nuevo) > 1e8:
+            return None, paso, advertencia + 'Divergencia detectada: valores crecientes.', max(errores)
+        anterior = nuevo
+    return None, max_iter, advertencia + 'No alcanzo la tolerancia.', max(errores)
 
 
-# PROGRAMA PRINCIPAL
-while True:
-    try:
-        n = int(input("Numero de ecuaciones: "))
-
-        if n > 0:
-            break
-
-        print("Ingresa un numero mayor que cero.")
-
-    except ValueError:
-        print("Ingresa un numero entero valido.")
-
-A = []
-
-print("\nIngresa la matriz aumentada.")
-print("Escribe cada fila separada por espacios.")
-print("Incluye el resultado al final de cada fila.\n")
-
-for i in range(n):
+def leer_matriz():
     while True:
         try:
-            fila = list(map(float, input(f"Fila {i+1}: ").split()))
-
-            if len(fila) == n + 1:
-                A.append(fila)
+            n = int(input('Numero de ecuaciones: '))
+            if n > 0:
                 break
-            else:
-                print(f"Debes ingresar {n+1} numeros.")
-
         except ValueError:
-            print("Ingresa solamente numeros validos.")
+            pass
+        print('Ingresa un numero entero positivo.')
+    print('Matriz aumentada: escribe cada fila separada por espacios.')
+    matriz = []
+    for i in range(n):
+        while True:
+            try:
+                fila = [float(v) for v in input(f'Fila {i+1}: ').split()]
+                if len(fila) == n + 1:
+                    matriz.append(fila)
+                    break
+            except ValueError:
+                pass
+            print(f'Ingresa exactamente {n+1} numeros validos.')
+    return matriz
 
-metodo_jacobi(A, n)
 
-
+if __name__ == '__main__':
+    A = leer_matriz()
+    resultado, iteraciones, mensaje, error = jacobi(A)
+    print('\n' + mensaje)
+    if resultado is not None:
+        print('RESULTADOS:')
+        for i, valor in enumerate(resultado, 1):
+            print(f'x{i} = {valor:.4f}')
+    print(f'Iteraciones: {iteraciones}')
+    if error is not None:
+        print(f'Error relativo maximo: {error:.4f}%')
+```
 
 # MÉTODO DE JACOBI EN PYTHON
 
@@ -176,10 +151,10 @@ Fila 2: -1 2 2
 
 RESULTADOS:
 
-x1 = 3.9999
-x2 = 3.0001
+x1 = 4.0000
+x2 = 3.0000
 
-Iteraciones: 19
+Iteraciones: 23
 Convergencia alcanzada.
 
 ### 5. Comprobación
@@ -201,7 +176,7 @@ Segunda ecuación:
 
 ### 6. Conclusión
 
-El usuario ingresó únicamente los valores de la matriz aumentada. El programa realizó 19 iteraciones mediante el método de Jacobi hasta alcanzar la tolerancia establecida y obtener una solución aproximada correcta.
+El usuario ingresó únicamente los valores de la matriz aumentada. El programa realizó 23 iteraciones mediante el método de Jacobi hasta alcanzar la tolerancia establecida y obtener una solución aproximada correcta.
 
 
 ---
@@ -255,7 +230,7 @@ RESULTADOS:
 x1 = 3.2727
 x2 = 1.0909
 
-Iteraciones: 9
+Iteraciones: 10
 Convergencia alcanzada.
 
 ### 5. Comprobación
@@ -283,7 +258,7 @@ Mediante el método de Jacobi se calcularon las corrientes eléctricas aproximad
 
 La primera malla presentó una corriente de 3.2727 A y la segunda de 1.0909 A.
 
-El usuario solamente ingresó los valores de la matriz y el programa realizó automáticamente las 9 iteraciones necesarias para alcanzar la tolerancia.
+El usuario solamente ingresó los valores de la matriz y el programa realizó automáticamente las 10 iteraciones necesarias para alcanzar la tolerancia.
 
 Este método resulta útil para analizar circuitos eléctricos y resolver sistemas de ecuaciones relacionados con Ingeniería en Sistemas Automotrices.
 
@@ -354,7 +329,7 @@ x1 = 1.0000
 x2 = 2.0000
 x3 = 3.0000
 
-Iteraciones: 10
+Iteraciones: 12
 Convergencia alcanzada.
 
 ## 5. Comprobación
@@ -388,7 +363,7 @@ Estos resultados representan las deformaciones de los tres puntos del modelo sim
 
 Mediante el método de Jacobi se determinaron los desplazamientos de tres puntos de un sistema de resortes acoplados.
 
-El usuario únicamente ingresó los valores de la matriz aumentada y el programa realizó automáticamente 10 iteraciones hasta alcanzar la tolerancia establecida.
+El usuario únicamente ingresó los valores de la matriz aumentada y el programa realizó automáticamente 12 iteraciones hasta alcanzar la tolerancia establecida.
 
 Este método puede utilizarse para analizar modelos matemáticos de suspensiones y otros sistemas mecánicos automotrices.
 
